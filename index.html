@@ -36,23 +36,17 @@ h1 { margin:0 0 12px 0; font-size:22px; } .muted { color:var(--muted); font-size
       <div class="desc" id="classMeta"></div>
     </div>
 
-    <div class="card" style="max-width:420px">
-      <label class="label">Use for Company</label>
-      <select class="input" id="company">
-        <option value="">Pilih company…</option>
-        <option>PT Sayap Mas Utama</option>
-        <option>PT Wings Surya</option>
-        <option>PT Karunia Alam Segar</option>
-        <option>PT Prakarsa Alam Segar</option>
-        <option>PT Lion Wings</option>
-        <option>PT Glico Wings</option>
-        <option>PT Calbee Wings</option>
-      </select>
-    </div>
+    <!-- Company selection removed as per new requirement -->
 
     <div class="card" style="max-width:340px">
       <label class="label">Server Reference</label>
-      <input class="input" id="server" placeholder="mis. TPR"/>
+      <select class="input" id="server">
+        <option value="">Pilih server…</option>
+        <option value="SPR">SPR</option>
+        <option value="SPE">SPE</option>
+        <option value="TPR">TPR</option>
+        <option value="APE">APE</option>
+      </select>
       <label class="label" style="margin-top:10px">MID Reference</label>
       <input class="input" id="mid" placeholder="mis. 20030"/>
     </div>
@@ -73,7 +67,7 @@ h1 { margin:0 0 12px 0; font-size:22px; } .muted { color:var(--muted); font-size
     <div class="kv">
       <div>Server Reference</div><div id="sumServer">-</div>
       <div>MID Reference</div><div id="sumMID">-</div>
-      <div>Company</div><div id="sumCompany">-</div>
+      <!-- Company summary removed per new requirement -->
       <div>Hasil Mat Desc</div><div id="sumMatDesc">-</div>
     </div>
   </div>
@@ -82,6 +76,130 @@ h1 { margin:0 0 12px 0; font-size:22px; } .muted { color:var(--muted); font-size
 <script>
 const LOCAL_JSON_URL = "./data/form_data.json";
 const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbzbLZUtvSxjBKOkpEOYgrxoDfXkg1H2K5ug-DTIKGpUH29RgM5-JIhedHqukAPpmWsr/exec";
+
+// Hardcoded object dependency rules derived from ZPI1_Object_Dependency.xlsx
+// Each controlling characteristic maps its triggering values to a list of characteristics that should appear and whether they are mandatory
+const charDependencies = {
+  EMBOSSED_BRAND_WINGS: {
+    // Show and require the Wings brand characteristic when the embossed brand flag is YES
+    YES: { show: ['BRAND_WINGS_SIPI'], mandatory: ['BRAND_WINGS_SIPI'] }
+  },
+  EXTERNAL_BRAND: {
+    YES: { show: ['BRAND_EXTERNAL','NO_SERI_BRAND_EXTERNAL'], mandatory: ['BRAND_EXTERNAL','NO_SERI_BRAND_EXTERNAL'] }
+  },
+  HAS_SPESIFIC_COLOUR: {
+    YES: { show: ['COLOUR'], mandatory: ['COLOUR'] }
+  },
+  EMBOSSED_SPESIFIC_DESAIN: {
+    YES: { show: ['DESAIN_NAME','DESAIN_MONTH','DESAIN_YEAR'], mandatory: ['DESAIN_NAME','DESAIN_MONTH','DESAIN_YEAR'] }
+  },
+  SPEC_QTY_IN_ONE_BUNDLE: {
+    YES: { show: ['QTY_IN_ONE_BUNDLE'], mandatory: ['QTY_IN_ONE_BUNDLE'] }
+  },
+  ITEM_SHAPE: {
+    PERSEGI: { show: ['LENGTH_PCS','WIDTH_PCS','HEIGHT_PCS','SIZE_UNIT_DIMENSI'], mandatory: ['LENGTH_PCS','WIDTH_PCS','HEIGHT_PCS','SIZE_UNIT_DIMENSI'] },
+    BULAT: { show: ['DIAMETER_PCS','HEIGHT_PCS','SIZE_UNIT_DIMENSI'], mandatory: ['DIAMETER_PCS','HEIGHT_PCS','SIZE_UNIT_DIMENSI'] }
+  }
+};
+
+// Mapping of ACTIVITY_TYPE_ADS to available ACTIVITY_OBJECT_ADS values
+const activityObjectMap = {
+  'BROAD.': ['RADIO', 'TV', 'CINEMA'],
+  'DIG.': ['MEDSOS', 'VID. ONLINE', 'SERCH ADS.'],
+  'EVNT SPONSHP': ['KOMUNITS','KULINER','PENDIDIKN','FEST. MUSIK','SPORT','FASHION','LIFESTYLE'],
+  'IN-STORE MED': ['DISP. PROMO'],
+  'OOH': ['VIDEOTRON','TRNSIT BRAND.','PUBL AREA'],
+  'PRINTED': ['BROSUR','POSTER','KATALOG','BANNER','BILLBOARD','KORAN','MAJALAH'],
+  'TALLNT ARTIS': ['SHOOTING'],
+  'TALLNT BA': ['EVNT ATTEND.','LIVE SHOP. COLLAB'],
+  'TALLNT KOL': ['CONT. CREAT.','POSTING','EVNT ATTEND.','LIVE SHOP. COLLAB']
+};
+
+// Store references to characteristic rows for dependency handling
+let charRows = {};
+
+// Update dependent characteristics visibility based on controlling values
+function updateDependencies() {
+  // Hide all dependent rows initially and clear mandatory flag
+  Object.keys(charRows).forEach((charName) => {
+    if (!charRows[charName]) return;
+    charRows[charName].style.display = '';
+    const inputEl = charRows[charName].querySelector('input');
+    if (inputEl) {
+      inputEl.required = false;
+    }
+  });
+  // Determine char values
+  const values = {};
+  for (const [name,row] of Object.entries(charRows)) {
+    const inp = row.querySelector('input');
+    if (inp) values[name] = inp.value.trim();
+  }
+  // Apply hide/show rules based on dependencies
+  // First hide all dependent rows defined in charDependencies
+  const dependentSet = new Set();
+  for (const parent in charDependencies) {
+    const rules = charDependencies[parent];
+    for (const val in rules) {
+      (rules[val].show || []).forEach((c) => dependentSet.add(c));
+    }
+  }
+  dependentSet.forEach((c) => {
+    if (charRows[c]) {
+      charRows[c].style.display = 'none';
+      const inputEl = charRows[c].querySelector('input');
+      if (inputEl) inputEl.required = false;
+    }
+  });
+  // Apply rules: for each controlling char, check its value
+  for (const parent in charDependencies) {
+    const parentVal = (values[parent] || '').toUpperCase();
+    const rules = charDependencies[parent];
+    if (rules[parentVal]) {
+      const showList = rules[parentVal].show || [];
+      const mandatoryList = rules[parentVal].mandatory || [];
+      showList.forEach((child) => {
+        if (charRows[child]) {
+          charRows[child].style.display = '';
+          const inputEl = charRows[child].querySelector('input');
+          if (inputEl && mandatoryList.includes(child)) {
+            inputEl.required = true;
+          }
+        }
+      });
+    }
+  }
+  // Update ACTIVITY_OBJECT_ADS options based on ACTIVITY_TYPE_ADS value
+  if (values['ACTIVITY_TYPE_ADS'] !== undefined && charRows['ACTIVITY_OBJECT_ADS']) {
+    const typeVal = values['ACTIVITY_TYPE_ADS'];
+    const allowed = activityObjectMap[typeVal] || [];
+    const inputObj = charRows['ACTIVITY_OBJECT_ADS'].querySelector('input');
+    if (inputObj) {
+      // Remove existing datalist if any
+      const oldListId = inputObj.getAttribute('list');
+      if (oldListId) {
+        const oldList = document.getElementById(oldListId);
+        if (oldList) oldList.remove();
+      }
+      // Create new datalist with allowed options if any
+      if (allowed.length) {
+        const newListId = 'dl_ACTIVITY_OBJECT_ADS_dyn';
+        const dl = document.createElement('datalist');
+        dl.id = newListId;
+        allowed.forEach((val) => {
+          const opt = document.createElement('option');
+          opt.value = val;
+          dl.appendChild(opt);
+        });
+        // Append new datalist and assign list attribute
+        inputObj.setAttribute('list', newListId);
+        inputObj.parentElement.appendChild(dl);
+      } else {
+        inputObj.removeAttribute('list');
+      }
+    }
+  }
+}
 
 let DATA = null;
 
@@ -167,13 +285,29 @@ function renderCharacteristicsForClass(clsName) {
     row.appendChild(left); row.appendChild(right);
     box.appendChild(row);
   }
+  // After all rows are created, prepare dependency handling
+  // Build a map of characteristic names to their row elements
+  charRows = {};
+  const allRows = box.querySelectorAll('.char-row');
+  allRows.forEach((r) => {
+    const inp = r.querySelector('input');
+    if (inp && inp.dataset.charName) {
+      charRows[inp.dataset.charName] = r;
+    }
+  });
+  // Run initial dependency update to hide/show dependent rows
+  if (typeof updateDependencies === 'function') {
+    updateDependencies();
+  }
+  // Ensure change listener is attached once to handle dependency changes
+  box.removeEventListener('change', updateDependencies);
+  box.addEventListener('change', updateDependencies);
 }
 
 function generateSummary() {
   const clsName = document.getElementById('classInput').value.trim();
   const server = document.getElementById('server').value.trim();
   const mid = document.getElementById('mid').value.trim();
-  const company = document.getElementById('company').value.trim();
 
   const inputs = Array.from(document.querySelectorAll('#charBox input'));
   const parts = [];
@@ -203,16 +337,27 @@ function generateSummary() {
 
   document.getElementById('sumServer').innerText = server || '-';
   document.getElementById('sumMID').innerText = mid || '-';
-  document.getElementById('sumCompany').innerText = company || '-';
   document.getElementById('sumMatDesc').innerText = matDesc || '-';
 
-  return { clsName, server, mid, company, matDesc, values: inputs.map(el => ({name: el.dataset.charName, val: el.value.trim()})) };
+  return { clsName, server, mid, matDesc, values: inputs.map(el => ({name: el.dataset.charName, val: el.value.trim()})) };
 }
 
 async function submitPayload() {
   const payload = generateSummary();
   if (!payload.clsName) { alert('Pilih Class yang tersedia (TABLE 1)'); return; }
   if (!DATA.classes[payload.clsName]) { alert('Class tidak terdaftar dalam TABLE 1.'); return; }
+  // Ask for MID ECC before submitting
+  let midEcc = prompt('Masukkan MID ECC (8 digit angka):');
+  if (midEcc === null) {
+    // User cancelled input
+    return;
+  }
+  midEcc = (midEcc || '').trim();
+  if (!/^\d{8}$/.test(midEcc)) {
+    alert('MID ECC harus terdiri dari 8 digit angka.');
+    return;
+  }
+  payload.mid_ecc = midEcc;
   try {
     await fetch(SUBMIT_URL, {
       method: 'POST',
