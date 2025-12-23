@@ -4553,6 +4553,10 @@
         "default": false
       },
       {
+        "value": "HUSKY",
+        "default": false
+      },
+      {
         "value": "IKEA",
         "default": false
       },
@@ -4797,6 +4801,10 @@
         "default": false
       },
       {
+        "value": "SHAFIRA",
+        "default": false
+      },
+      {
         "value": "SHINPO",
         "default": false
       },
@@ -4890,6 +4898,10 @@
       },
       {
         "value": "UBS",
+        "default": false
+      },
+      {
+        "value": "UMAMA",
         "default": false
       },
       {
@@ -5344,10 +5356,6 @@
       },
       {
         "value": "KTO",
-        "default": false
-      },
-      {
-        "value": "TCO",
         "default": false
       },
       {
@@ -6269,12 +6277,6 @@
         "default": false
       }
     ],
-    "ITEM_NAME_BRACKET": [
-      {
-        "value": "BRACKET",
-        "default": false
-      }
-    ],
     "ITEM_NAME_COMM_ACCS": [
       {
         "value": "PHONE HOLD",
@@ -6297,6 +6299,10 @@
       {
         "value": "HT",
         "default": false
+      },
+      {
+        "value": "Tab",
+        "default": false
       }
     ],
     "ITEM_NAME_COMP_HARDDISK": [
@@ -6314,6 +6320,10 @@
       },
       {
         "value": "SD CARD",
+        "default": false
+      },
+      {
+        "value": "MICRO SD",
         "default": false
       }
     ],
@@ -6341,11 +6351,7 @@
         "default": false
       },
       {
-        "value": "KEYBOARD",
-        "default": false
-      },
-      {
-        "value": "MOUSE",
+        "value": "Keyboard",
         "default": false
       },
       {
@@ -6386,6 +6392,38 @@
       },
       {
         "value": "EARPHONE",
+        "default": false
+      },
+      {
+        "value": "UPS",
+        "default": false
+      },
+      {
+        "value": "Mouse",
+        "default": false
+      },
+      {
+        "value": "USB Cable",
+        "default": false
+      },
+      {
+        "value": "Charger",
+        "default": false
+      },
+      {
+        "value": "Fngrprnt Rdr",
+        "default": false
+      },
+      {
+        "value": "Wifi Adptr",
+        "default": false
+      },
+      {
+        "value": "Wless USB Adptr",
+        "default": false
+      },
+      {
+        "value": "Printer",
         "default": false
       }
     ],
@@ -8251,13 +8289,217 @@
         "default": false
       }
     ],
-    "USAGE_BRACKET": [
+    "BRACKET_ITEM_APA": [
       {
-        "value": "CCTV",
+        "value": "AC Outdoor",
         "default": false
       },
       {
-        "value": "PROJECTOR",
+        "value": "PVC Curtain",
+        "default": false
+      },
+      {
+        "value": "Siku Al Profile",
+        "default": false
+      },
+      {
+        "value": "TV",
+        "default": false
+      },
+      {
+        "value": "LCD/LED DISPLAY",
+        "default": false
+      },
+      {
+        "value": "VALVE BATCHING",
+        "default": false
+      },
+      {
+        "value": "CAMERA",
+        "default": false
+      }
+    ],
+    "ITEM_NAME_COM_TAB_ACCS": [
+      {
+        "value": "Case",
+        "default": false
+      },
+      {
+        "value": "Screen Ptc",
+        "default": false
+      }
+    ],
+    "DIMENSION_COMP_HARDDISK": [
+      {
+        "value": "MB",
+        "default": false
+      },
+      {
+        "value": "GB",
+        "default": false
+      },
+      {
+        "value": "TB",
+        "default": false
+      }
+    ],
+    "RAM_DIMENSION_COMPUTER": [
+      {
+        "value": "GB",
+        "default": false
+      },
+      {
+        "value": "TB",
+        "default": false
+      }
+    ],
+    "HARDDISK_DIMENSION_COMPUTER": [
+      {
+        "value": "MB",
+        "default": false
+      },
+      {
+        "value": "GB",
+        "default": false
+      },
+      {
+        "value": "TB",
+        "default": false
+      }
+    ],
+    "ITEM_NAME_ICT_CABLE": [
+      {
+        "value": "Adaptor",
+        "default": false
+      },
+      {
+        "value": "Cable",
+        "default": false
+      },
+      {
+        "value": "Cable Pwr CPU",
+        "default": false
+      },
+      {
+        "value": "Cable Screen",
+        "default": false
+      },
+      {
+        "value": "Cable Sprl Tele",
+        "default": false
+      },
+      {
+        "value": "Cable Tele",
+        "default": false
+      },
+      {
+        "value": "Cbl I/O Conn",
+        "default": false
+      },
+      {
+        "value": "Conn+Cable",
+        "default": false
+      },
+      {
+        "value": "Connector",
+        "default": false
+      },
+      {
+        "value": "Converter",
+        "default": false
+      },
+      {
+        "value": "Data Cable",
+        "default": false
+      },
+      {
+        "value": "DB9 Cable",
+        "default": false
+      },
+      {
+        "value": "Fbr Optic",
+        "default": false
+      },
+      {
+        "value": "Fbr Optic Cable",
+        "default": false
+      },
+      {
+        "value": "HDMI Cable",
+        "default": false
+      },
+      {
+        "value": "Jack Data",
+        "default": false
+      },
+      {
+        "value": "Jack Mic",
+        "default": false
+      },
+      {
+        "value": "Patch Cord",
+        "default": false
+      },
+      {
+        "value": "Patch Panel",
+        "default": false
+      },
+      {
+        "value": "Pwr Cable",
+        "default": false
+      },
+      {
+        "value": "Sensor",
+        "default": false
+      },
+      {
+        "value": "Splitter",
+        "default": false
+      },
+      {
+        "value": "Syphone",
+        "default": false
+      },
+      {
+        "value": "USB 2 Port",
+        "default": false
+      },
+      {
+        "value": "USB Cable",
+        "default": false
+      },
+      {
+        "value": "UTP Cable",
+        "default": false
+      },
+      {
+        "value": "VGA Cable",
+        "default": false
+      }
+    ],
+    "ITEM_NAME_NETWORK_EQP": [
+      {
+        "value": "Ethernet",
+        "default": false
+      },
+      {
+        "value": "Switch",
+        "default": false
+      },
+      {
+        "value": "AP",
+        "default": false
+      },
+      {
+        "value": "Router",
+        "default": false
+      },
+      {
+        "value": "SFP Module",
+        "default": false
+      },
+      {
+        "value": "Media Convert",
         "default": false
       }
     ]
